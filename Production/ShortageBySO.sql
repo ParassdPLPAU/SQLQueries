@@ -38,8 +38,9 @@ WITH ANCHOR  AS (
         0 as lvl
     FROM erp.JobProd JP
     INNER JOIN erp.JobOper JO ON JO.JobNum = JP.JobNum 
-	WHERE OrderNum <> 0 AND OrderNum IS NOT NULL --Add parameters here ie ordernum,line and rel so that you only select jobs for a particular sales order.
-	
+	WHERE OrderNum <> 0 AND OrderNum IS NOT NULL  --Add parameters here ie ordernum,line and rel so that you only select jobs for a particular sales order.
+	AND OrderNum = '2365260' AND OrderLine = 1 AND OrderRelNum = 1 --Change this to your order number, line and rel
+
     UNION ALL
 
     SELECT 
@@ -113,7 +114,6 @@ WITH ANCHOR  AS (
     LEFT JOIN erp.JobMtl JM ON JM.JobNum = A.JobNum
     LEFT JOIN DailyRunningBalances DRB ON JM.PartNum = DRB.PartNum AND TPDueDate <= A.StartDate
     INNER JOIN erp.PartPlant PP ON JM.PartNum = PP.PartNum AND PP.Plant = JM.Plant
-    
 )
 SELECT * FROM 
 ShortageCheck
