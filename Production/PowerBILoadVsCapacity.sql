@@ -1,4 +1,5 @@
 --Latest query
+ALTER VIEW 
 
 WITH ANCHOR  AS (
     SELECT 
@@ -137,6 +138,7 @@ WITH ANCHOR  AS (
 		A.OrderNum,
 		A.OrderLine,
 		A.OrderRelNum,
+        A.lvl,
 		JH.JobFirm,
 		JH.ProdQty AS TotalJobProdQty,
 		CASE 
