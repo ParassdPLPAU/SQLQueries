@@ -178,4 +178,9 @@ WITH ANCHOR  AS (
 	LEFT JOIN JobHead JH ON L.ResourceTimeUsed_JobNum = JH.JobNum
 ) 
 
-SELECT * FROM BASE_2 --where OrderNum = '2365262' and orderline = '2' and OrderRelNum = '1' order by ResourceTimeUsed_JobNum
+--SELECT * FROM BASE_2 --where OrderNum = '2365262' and orderline = '2' and OrderRelNum = '1' order by ResourceTimeUsed_JobNum
+
+--To analyse load vs capacity for each Resource Group and date and find out the max overloads
+SELECT RGCalendarDate,RGResourceGrpID, SUM(CAST(LoadHrs as float)) as totalload FROM BASE_2
+GROUP BY RGCalendarDate, RGResourceGrpID
+ORDER BY SUM(CAST(LoadHrs as float))  desc
