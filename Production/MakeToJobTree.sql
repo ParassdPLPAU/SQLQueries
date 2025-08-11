@@ -1,3 +1,11 @@
+/*
+    Recursive CTE to build a job tree for a specific sales order, line, and release.
+    - The [Base] CTE selects the root job(s) for the given order, line, and release.
+    - The [Anchor] CTE recursively joins JobProd to find all jobs linked via TargetJobNum, incrementing the level for each recursion.
+    - The final SELECT returns the job tree, including job numbers, part numbers, production quantities, order details, target job/assembly/material references, and job firm status, along with key job dates.
+    - Results are ordered by the calculated level in the job tree.
+    - Used for visualizing or analyzing the make-to-job structure for a given sales order in Epicor ERP.
+*/
 with [Base] as 
 (select 
 	(0) as [Calculated_lvl],
