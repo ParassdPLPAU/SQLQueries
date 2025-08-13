@@ -1,6 +1,4 @@
 --Latest query
-ALTER VIEW 
-
 WITH ANCHOR  AS (
     SELECT 
         JobNum,
@@ -164,5 +162,19 @@ WITH ANCHOR  AS (
 ) 
 
 SELECT * FROM BASE_2 
---where ResourceTimeUsed_JobNum LIKE '%U%044'
---order by RGCalendarDate, ResourceTimeUsed_JobNum, Calculated_LoadStartDate, ResourceTimeUsed_OprSeq,rn 
+where SOLineRelPartNum = 'MTS' and RGResourceGrpID LIKE '%AEM%' --Analyse AEM jobs that are MTS (which should ideally be 0)
+order by RGCalendarDate, ResourceTimeUsed_JobNum, Calculated_LoadStartDate, ResourceTimeUsed_OprSeq,rn 
+
+--To analyse total load for each Resource Group and date
+--SELECT RGCalendarDate,RGResourceGrpID, SUM(CAST(LoadHrs as float)) as totalload FROM BASE_2
+--GROUP BY RGCalendarDate, RGResourceGrpID
+--ORDER BY SUM(CAST(LoadHrs as float))  desc
+
+--To calculate the total load for AEM jobs that are MTS
+--, BASE_3 AS (
+--SELECT RGCalendarDate,RGResourceGrpID, SUM(CAST(LoadHrs as float)) as totalload FROM BASE_2
+--where SOLineRelPartNum = 'MTS' and RGResourceGrpID LIKE '%AEM%'
+--GROUP BY RGCalendarDate, RGResourceGrpID
+--)
+
+--SELECT SUM(totalload) FROM BASE_3
