@@ -7,30 +7,30 @@ HAVING COUNT(*) >= 5 order by days_out desc;
 -- Does not record parts with no demand but SOH - should be NC materials
 -- Does not account for parts that have demand outside the LT but no demand within LT and has SOH
 WITH BASE AS (
-SELECT PP.PartNum, MAX(PD.DueDate) AS 'LatestDueDateLT'
-FROM erp.PartPlant PP
-INNER JOIN erp.partdtl PD
-ON PD.PartNum = PP. PartNum
-INNER JOIN erp.PartWhse PW
-ON PW.PartNum = PP.PartNum
-WHERE PP.Plant = 'GLENDN'
-AND PW.WarehouseCode = '190'
-AND GetDATE() + LeadTime >= PD.DueDate
-GROUP BY PP.PartNum,PP.LeadTime
+	SELECT PP.PartNum, MAX(PD.DueDate) AS 'LatestDueDateLT'
+	FROM erp.PartPlant PP
+	INNER JOIN erp.partdtl PD
+	ON PD.PartNum = PP. PartNum
+	INNER JOIN erp.PartWhse PW
+	ON PW.PartNum = PP.PartNum
+	WHERE PP.Plant = 'GLENDN'
+	AND PW.WarehouseCode = '190'
+	AND GetDATE() + LeadTime >= PD.DueDate
+	GROUP BY PP.PartNum,PP.LeadTime
 ),BASE_2 AS (
-SELECT PP.PartNum, 
-SUM(PD.Quantity) AS 'Demand'
-FROM erp.PartPlant PP
-INNER JOIN erp.partdtl PD
-ON PD.PartNum = PP. PartNum
-INNER JOIN BASE ON
-BASE.PartNum = PP.PartNum
-INNER JOIN erp.PartWhse PW
-ON PW.PartNum = PP.PartNum
-WHERE PP.Plant = 'GLENDN'
-AND PD.Duedate <= BASE.LatestDueDateLT
-AND PW.WarehouseCode = '190'
-GROUP BY PP.PartNum
+	SELECT PP.PartNum, 
+	SUM(PD.Quantity) AS 'Demand'
+	FROM erp.PartPlant PP
+	INNER JOIN erp.partdtl PD
+	ON PD.PartNum = PP. PartNum
+	INNER JOIN BASE ON
+	BASE.PartNum = PP.PartNum
+	INNER JOIN erp.PartWhse PW
+	ON PW.PartNum = PP.PartNum
+	WHERE PP.Plant = 'GLENDN'
+	AND PD.Duedate <= BASE.LatestDueDateLT
+	AND PW.WarehouseCode = '190'
+	GROUP BY PP.PartNum
 ) /*TEST SCRIPT*/
 --SELECT PP.PartNum, P.Constrained,  LatestDueDateLT, PW.OnHandQty, Demand, PP.SafetyQty, CASE WHEN ((PW.OnHandQty - BASE_2.Demand) >= PP.SafetyQty) THEN 'Y' ELSE 'N' END as 'Check'
 --FROM erp.PartPlant PP
