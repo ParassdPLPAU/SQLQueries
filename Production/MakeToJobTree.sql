@@ -23,7 +23,7 @@ from Erp.JobProd as JobProd2
 inner join Erp.JobHead as JobHead3 on 
 	JobProd2.Company = JobHead3.Company
 	and JobProd2.JobNum = JobHead3.JobNum
-where (JobProd2.OrderNum = '2365688'  and JobProd2.OrderLine = '6'  and JobProd2.OrderRelNum = '1'))
+where (JobProd2.OrderNum = '2359381'  and JobProd2.OrderLine = '10'  and JobProd2.OrderRelNum = '1'))
  ,[Anchor] as 
 (select 
 	[Base].[Calculated_lvl] as [Calculated_lvl],
@@ -62,6 +62,7 @@ where (JobProd1.TargetJobNum is not null))
 select 
 	[Anchor1].[Calculated_lvl] as [Calculated_lvl],
 	[Anchor1].[JobProd2_JobNum] as [JobProd2_JobNum],
+	[Anchor1].[JobProd2_PartNum] as [JobProd2_PartNum],
 	[Anchor1].[JobProd2_OrderNum] as [JobProd2_OrderNum],
 	[Anchor1].[JobProd2_OrderLine] as [JobProd2_OrderLine],
 	[Anchor1].[JobProd2_OrderRelNum] as [JobProd2_OrderRelNum],
