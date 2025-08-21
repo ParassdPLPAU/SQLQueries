@@ -1,0 +1,113 @@
+// Matt B
+int counterLimit = 0;
+
+using (var updater = this.getDataUpdater("Erp", "Part"))
+{
+    var ttResultQuery = ttResults.Where(row=> row.Part_Constrained != row.Calculated_ShouldBeConstrained);
+
+    foreach (var ttResult in ttResultQuery)
+    {
+      if(counterLimit < 500)
+      {
+        counterLimit++;
+        var ds = new Erp.Tablesets.UpdExtPartTableset();
+
+        // Query to object mapping
+        {
+            var Part = new Erp.Tablesets.PartRow
+            {
+                Company = ttResult.Part_Company,
+                Constrained = ttResult.Calculated_ShouldBeConstrained,
+                PartNum = ttResult.Part_PartNum,
+            };
+
+            ds.Part.Add(Part);
+
+            var PartPlant = new Erp.Tablesets.PartPlantRow
+            {
+                Company = ttResult.PartPlant_Company,
+                LeadTime = ttResult.PartPlant_LeadTime,
+                PartNum = ttResult.PartPlant_PartNum,
+                Plant = ttResult.PartPlant_Plant,
+                SourceType = ttResult.PartPlant_SourceType,
+            };
+
+            ds.PartPlant.Add(PartPlant);
+
+        }
+
+        BOUpdErrorTableset boUpdateErrors = updater.Update(ref ds);
+        if (this.BpmDataFormIsPublished()) return;
+
+    //    ttResult.RowMod = "P";
+
+        // Object to query mapping
+
+
+        {
+            var Part = ds.Part.FirstOrDefault(
+                tableRow => tableRow.Company == ttResult.Part_Company
+                    && tableRow.PartNum == ttResult.Part_PartNum);
+            if (Part == null)
+            {
+                Part = ds.Part.LastOrDefault();
+            }
+
+            var PartPlant = ds.PartPlant.FirstOrDefault(
+                tableRow => tableRow.Company == ttResult.PartPlant_Company
+                    && tableRow.PartNum == ttResult.PartPlant_PartNum
+                    && tableRow.Plant == ttResult.PartPlant_Plant);
+            if (PartPlant == null)
+            {
+                PartPlant = ds.PartPlant.LastOrDefault();
+            }
+
+            if (Part != null)
+            {
+                ttResult.Part_Company = Part.Company;
+                ttResult.Part_Constrained = Part.Constrained;
+                ttResult.Part_PartNum = Part.PartNum;
+            }
+
+            if (PartPlant != null)
+            {
+                ttResult.PartPlant_Company = PartPlant.Company;
+                ttResult.PartPlant_LeadTime = PartPlant.LeadTime;
+                ttResult.PartPlant_PartNum = PartPlant.PartNum;
+                ttResult.PartPlant_Plant = PartPlant.Plant;
+                ttResult.PartPlant_SourceType = PartPlant.SourceType;
+            }
+        }
+
+        if (boUpdateErrors?.BOUpdError?.Count > 0)
+        {
+            ttErrors
+                .AddRange(
+                    boUpdateErrors.BOUpdError
+                        .Select(
+                            e => new ErrorsUbaqRow
+                            {
+                                TableName = e.TableName,
+                                ErrorRowIdent = ttResult.RowIdent,
+                                ErrorText = e.ErrorText,
+                                ErrorType = e.ErrorType
+                            }));
+        }
+    }
+    }
+}
+/*
+var ttResultsForDelete = ttResults
+    .Where(row => row.RowMod != "P")
+    .ToArray();
+
+foreach (var ttResult in ttResultsForDelete)
+{
+    ttResults.Remove(ttResult);
+}
+*/
+
+foreach (var ttResult in ttResults)
+{
+    ttResult.RowMod = "";
+}
