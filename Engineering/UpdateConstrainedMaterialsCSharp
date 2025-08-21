@@ -1,4 +1,14 @@
-// Matt B
+/// C# code to update constrained materials via updateable BAQ in advanced BPM section.
+/// Updates up to 500 Part and PartPlant records in the ERP system where the current 'Constrained' status does not match the calculated value.
+/// For each qualifying record in ttResults:
+///   -Creates and populates Part and PartPlant rows in an UpdExtPartTableset dataset.
+///   -Calls the data updater to persist changes to the ERP system.
+///   -Maps updated dataset values back to the corresponding ttResult object.
+///   -Collects any update errors into ttErrors for reporting.
+/// After processing, resets the RowMod property for all ttResults records.
+// Developed by Matt B
+
+
 int counterLimit = 0;
 
 using (var updater = this.getDataUpdater("Erp", "Part"))
