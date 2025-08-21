@@ -39,7 +39,7 @@ WITH ANCHOR  AS (
     FROM erp.JobProd JP
     INNER JOIN erp.JobOper JO ON JO.JobNum = JP.JobNum 
 	WHERE OrderNum <> 0 AND OrderNum IS NOT NULL  --Add parameters here ie ordernum,line and rel so that you only select jobs for a particular sales order.
-	AND OrderNum = '2366539' AND OrderLine = 5 AND OrderRelNum = 1 --Change this to your order number, line and rel
+	--AND OrderNum = '2366539' AND OrderLine = 5 AND OrderRelNum = 1 --Change this to your order number, line and rel
 
     UNION ALL
 
@@ -118,7 +118,7 @@ WITH ANCHOR  AS (
             WHEN PP.SourceType = 'P' THEN
                 DATEADD(day, -PP.LeadTime, A.StartDate)
             ELSE NULL
-        END AS 'MakeOrderDate'
+        END AS 'MOBDate'
     FROM Anchor A 
     LEFT JOIN erp.JobMtl JM ON JM.JobNum = A.JobNum
     LEFT JOIN DailyRunningBalances DRB ON JM.PartNum = DRB.PartNum AND TPDueDate <= A.StartDate
